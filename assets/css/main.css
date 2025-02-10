@@ -14,7 +14,7 @@
   --background-color: #f0f4f8; /* Un fondo gris claro suave */
   --default-color: #333333; /* Un gris oscuro para el texto principal */
   --heading-color: #1a5f7a; /* Un azul oscuro para los encabezados */
-  --accent-color: #2ecc71; /* Un verde vibrante como color de acento */
+  --accent-color: #285151; /* Un verde vibrante como color de acento */
   --surface-color: #ffffff; /* Mantenemos el blanco para las superficies */
   --contrast-color: #ffffff; /* Mantenemos el blanco para el contraste */
 }
@@ -22,11 +22,11 @@
 /* Nav Menu Colors */
 :root {
   --nav-color: #333333;  /* Color principal de navegación */
-  --nav-hover-color: #2ecc71; /* Color de hover que coincide con el acento */
+  --nav-hover-color: #285151; /* Color de hover que coincide con el acento */
   --nav-mobile-background-color: #f0f4f8; /* Fondo del menú móvil */
   --nav-dropdown-background-color: #ffffff; /* Fondo del menú desplegable */
   --nav-dropdown-color: #333333; /* Color del texto en el menú desplegable */
-  --nav-dropdown-hover-color: #2ecc71; /* Color de hover en el menú desplegable */
+  --nav-dropdown-hover-color: #285151; /* Color de hover en el menú desplegable */
 }
 
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */

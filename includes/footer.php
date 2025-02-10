@@ -1,6 +1,6 @@
 <footer id="footer" class="footer light-background">
     <div class="container">
-        <h3 class="sitename">E-Learning</h3>
+        <h3 class="sitename">Sistema de carga - RAMCC</h3>
         <p>Alto Buró, Puerto Norte Junín 191, S2000 Rosario, Santa Fe</p>
         <div class="social-links d-flex justify-content-center">
             <a href="https://www.facebook.com/ramcc.net/" target="_blank"><i class="bi bi-facebook"></i></a>
@@ -16,13 +16,13 @@
     </div>
 </footer>
 
-<!-- WhatsApp Button -->
+<!-- WhatsApp Button
 <a href="https://wa.me/5493416181694" 
    class="whatsapp-float d-flex align-items-center justify-content-center" 
    target="_blank"
    rel="noopener noreferrer">
     <i class="bi bi-whatsapp"></i>
-</a>
+</a> -->
 
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">

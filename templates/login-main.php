@@ -1,5 +1,5 @@
 <div class="page-title" id="contacto" data-aos="fade">
-    <div class="heading">
+    <div class="heading py-5">
         <div class="container">
             <div class="row d-flex justify-content-center text-center">
                 <div class="col-lg-8">
@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<section class="login-section my-5">
+<section class="login-section my-2">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">

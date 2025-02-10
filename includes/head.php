@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>E-Learning - RAMCC</title>
+    <title>Sistema de carga - RAMCC</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
 
     <!-- Favicons -->
-    <link rel="icon" href="./assets/img/aula-logo.ico" type="image/x-icon">
+    <link rel="icon" href="./assets/img/logo-iso.ico" type="image/x-icon">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
