@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/auth.php';
 
-// Verificar sesión y acceso al municipio 1
 verificarSesion();
 
 if ($_SESSION['id_municipio'] != 1) {
@@ -9,9 +8,8 @@ if ($_SESSION['id_municipio'] != 1) {
     exit;
 }
 
-
 // Obtener listado de usuarios
-$sql = "SELECT u.nombre, u.apellido, u.email, m.nombre_muni 
+$sql = "SELECT u.id_user, u.nombre, u.apellido, u.email, u.id_municipio, m.nombre_muni 
         FROM users u 
         JOIN municipios m ON u.id_municipio = m.id_municipio";
 $stmt = $pdo->prepare($sql);
@@ -46,10 +44,10 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td><?php echo htmlspecialchars($usuario['email']); ?></td>
                             <td><?php echo htmlspecialchars($usuario['nombre_muni']); ?></td>
                             <td>
-                                <button class="btn btn-warning btn-sm me-2">
+                                <button class="btn btn-warning btn-sm me-2 btn-editar" data-id="<?php echo $usuario['id_user']; ?>">
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
-                                <button class="btn btn-danger btn-sm">
+                                <button class="btn btn-danger btn-sm btn-eliminar" data-id="<?php echo $usuario['id_user']; ?>" data-nombre="<?php echo htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellido']); ?>">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </td>
@@ -124,6 +122,55 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 </div>
+<!-- Modal Editar Usuario -->
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarUsuarioLabel"><b>Editar Usuario</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarUsuario">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_id_user" name="id_user">
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="edit_nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
+                    </div>
+                    <!-- Apellido -->
+                    <div class="mb-3">
+                        <label for="edit_apellido" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="edit_apellido" name="apellido" required>
+                    </div>
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="edit_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="edit_email" name="email" required>
+                    </div>
+                    <!-- Municipio -->
+                    <div class="mb-3">
+                        <label for="edit_id_municipio" class="form-label">Municipio</label>
+                        <select class="form-select" id="edit_id_municipio" name="id_municipio" required>
+                            <?php
+                            $sqlMunicipios = "SELECT id_municipio, nombre_muni FROM municipios ORDER BY nombre_muni";
+                            $stmtMunicipios = $pdo->query($sqlMunicipios);
+                            while ($municipio = $stmtMunicipios->fetch(PDO::FETCH_ASSOC)) {
+                                echo '<option value="' . htmlspecialchars($municipio['id_municipio']) . '">' .
+                                    htmlspecialchars($municipio['nombre_muni']) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- Script para procesar el formulario -->
 <script>
@@ -186,12 +233,148 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     });
 </script>
 
+<!-- Script para eliminar y borrar usuarios -->
+<script>
+    // Función para cargar datos del usuario en el modal de edición
+    function cargarDatosUsuario(id) {
+        const usuario = <?php echo json_encode($usuarios); ?>.find(u => u.id_user == id);
+        if (usuario) {
+            document.getElementById('edit_id_user').value = usuario.id_user;
+            document.getElementById('edit_nombre').value = usuario.nombre;
+            document.getElementById('edit_apellido').value = usuario.apellido;
+            document.getElementById('edit_email').value = usuario.email;
+            document.getElementById('edit_id_municipio').value = usuario.id_municipio;
+        }
+    }
+
+    // Event listener para botones de editar
+    document.querySelectorAll('.btn-editar').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.getAttribute('data-id');
+            cargarDatosUsuario(userId);
+            const modalEditarUsuario = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
+            modalEditarUsuario.show();
+        });
+    });
+
+    // Event listener para el formulario de edición
+    document.getElementById('formEditarUsuario').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('controllers/procesar_editar_usuario.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Usuario actualizado!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al procesar la solicitud'
+                });
+            });
+    });
+
+    // Event listener para botones de eliminar
+    document.querySelectorAll('.btn-eliminar').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.getAttribute('data-id');
+            const userName = this.getAttribute('data-nombre');
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Realmente deseas eliminar al usuario ${userName}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Segunda confirmación
+                    Swal.fire({
+                        title: 'Confirma nuevamente',
+                        text: `¿Estás completamente seguro de eliminar al usuario ${userName}?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminar definitivamente',
+                        cancelButtonText: 'Cancelar'
+                    }).then((secondResult) => {
+                        if (secondResult.isConfirmed) {
+                            // Proceder con la eliminación
+                            const formData = new FormData();
+                            formData.append('id_user', userId);
+
+                            fetch('controllers/procesar_eliminar_usuario.php', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Usuario eliminado',
+                                            text: data.message,
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: data.message
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Ocurrió un error al procesar la solicitud'
+                                    });
+                                });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 <!-- Script para inicializar DataTables -->
 <script>
     $(document).ready(function() {
         $('#tablaUsuarios').DataTable({
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                url: 'cdn.datatables.net/plug-ins/2.2.2/i18n/es-ES.json',
             },
             responsive: true,
             columnDefs: [{
