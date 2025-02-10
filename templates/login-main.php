@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row d-flex justify-content-center text-center">
                 <div class="col-lg-8">
-                    <h1>Iniciar Sesión</h1>
+                    <h1 class="text-white">Iniciar Sesión</h1>
                 </div>
             </div>
         </div>
@@ -57,44 +57,44 @@
 </section>
 
 <script>
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    
-    fetch('procesar_login.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Bienvenido!',
-                text: 'Iniciando sesión...',
-                timer: 1500,
-                showConfirmButton: false
-            }).then(() => {
-                window.location.href = data.redirect;
-            });
-        } else {
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('procesar_login.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Bienvenido!',
+                    text: 'Iniciando sesión...',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = data.redirect;
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message,
+                    confirmButtonText: 'Intentar nuevamente'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: data.message,
+                text: 'Ocurrió un error al procesar la solicitud',
                 confirmButtonText: 'Intentar nuevamente'
             });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al procesar la solicitud',
-            confirmButtonText: 'Intentar nuevamente'
         });
     });
-});
 </script>

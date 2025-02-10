@@ -11,3 +11,4 @@ RewriteRule ^$ index.php [L]
 
 # Redirigir URLs amigables
 RewriteRule ^InicioDeSesion$ login.php [L]
+RewriteRule ^PanelAdministrador$ admin-usuarios.php [L]

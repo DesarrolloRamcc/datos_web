@@ -18,8 +18,9 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!-- Botón Agregar Usuario -->
-<div class="container mt-4">
-    <div class="d-flex justify-content-end mb-4">
+<div class="container mt-4 mb-5">
+<h1 class="text-center"><b>Usuarios</b></h1>
+    <div class="d-flex justify-content-end mb-3 gap-2">
         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalAgregarUsuario">
             <i class="bi bi-person-plus-fill me-2"></i>Agregar Usuario
         </button>

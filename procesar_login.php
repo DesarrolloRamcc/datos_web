@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($usuario['id_municipio'] == 1) {
                     $redirect = "admin.php";
                 } else {
-                    $redirect = "admin-usuarios.php";
+                    $redirect = "PanelAdministrador";
                 }
 
                 // Preparar respuesta JSON
