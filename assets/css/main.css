@@ -225,6 +225,23 @@ h6 {
   color: var(--accent-color);
 }
 
+.header .btn-logout,
+.header .btn-logout:focus {
+  color: var(--contrast-color);
+  background: red;
+  font-size: 14px;
+  padding: 8px 25px;
+  margin: 0 0 0 30px;
+  border-radius: 50px;
+  transition: 0.3s;
+}
+
+.header .btn-logout:hover,
+.header .btn-logout:focus:hover {
+  color: var(--contrast-color);
+  background: color-mix(in srgb, red, transparent 15%);
+}
+
 .header .btn-getstarted,
 .header .btn-getstarted:focus {
   color: var(--contrast-color);
@@ -248,6 +265,12 @@ h6 {
   }
 
   .header .btn-getstarted {
+    order: 2;
+    margin: 0 15px 0 0;
+    padding: 6px 15px;
+  }
+
+  .header .btn-logout {
     order: 2;
     margin: 0 15px 0 0;
     padding: 6px 15px;

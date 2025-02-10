@@ -26,10 +26,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['id_municipio'] = $usuario['id_municipio'];
                 $_SESSION['nombre_municipio'] = $usuario['nombre_muni'];
 
+                // Redirigir según el id_municipio
+                if ($usuario['id_municipio'] == 1) {
+                    $redirect = "admin.php";
+                } else {
+                    $redirect = "admin-usuarios.php";
+                }
+
                 // Preparar respuesta JSON
                 $response = [
                     'success' => true,
-                    'redirect' => "admin.php?id=" . $usuario['id_user']
+                    'redirect' => $redirect
                 ];
             } else {
                 $response = [

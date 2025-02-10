@@ -5,9 +5,6 @@ verificarSesion();
 
 $id_municipio = obtenerIdMunicipioActual();
 $nombre_municipio = $_SESSION['nombre_municipio'] ?? 'Municipio';
-
-// Aquí podrías agregar una verificación adicional si es necesario
-// verificarAccesoMunicipio($id_municipio);
 ?>
 
 <div class="container mt-5">

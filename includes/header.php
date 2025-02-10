@@ -8,15 +8,16 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <!-- <li><a href="Inicio" class="active">Inicio<br></a></li>
-                <li><a href="Cursos">Cursos</a></li>
-                <li><a href="Contacto">Contacto</a></li> -->
-                <!-- <li><a href="login.php">Ingresar</a></li> -->
             </ul>
             <!-- <i class="mobile-nav-toggle d-xl-none bi bi-list"></i> -->
         </nav>
 
         <a class="btn-getstarted" href="InicioDeSesion">Ingresar</a>
+        <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']): ?>
+            <a href="logout.php" class="btn-logout">
+                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+            </a>
+        <?php endif; ?>
 
     </div>
 </header>
