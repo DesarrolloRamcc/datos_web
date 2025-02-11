@@ -8,14 +8,14 @@ function iniciarSesion() {
 function verificarSesion() {
     iniciarSesion();
     if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-        header("Location: login.php");
+        header("Location: InicioDeSesion");
         exit;
     }
 }
 
-function verificarAccesoMunicipio($id_municipio_pagina) {
+function verificarSuperAdmin() {
     verificarSesion();
-    if ($_SESSION['id_municipio'] != $id_municipio_pagina) {
+    if (!isset($_SESSION['super_admin']) || $_SESSION['super_admin'] != 1) {
         header("Location: acceso_denegado.php");
         exit;
     }
@@ -35,6 +35,6 @@ function cerrarSesion() {
     iniciarSesion();
     $_SESSION = array();
     session_destroy();
-    header("Location: login.php");
+    header("Location: InicioDeSesion");
     exit;
 }

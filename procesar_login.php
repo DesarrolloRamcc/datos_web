@@ -6,9 +6,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
 
-    $sql = "SELECT u.id_user, u.email, u.password, u.nombre, u.apellido, u.id_municipio, m.nombre_muni 
+    $sql = "SELECT u.id_user, u.email, u.password, u.nombre, u.apellido, u.id_municipio, u.super_admin, m.name as nombre_muni 
             FROM users u 
-            JOIN municipios m ON u.id_municipio = m.id_municipio 
+            LEFT JOIN municipios m ON u.id_municipio = m.id 
             WHERE u.email = ?";
     
     if ($stmt = $pdo->prepare($sql)) {
@@ -25,9 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['apellido'] = $usuario['apellido'];
                 $_SESSION['id_municipio'] = $usuario['id_municipio'];
                 $_SESSION['nombre_municipio'] = $usuario['nombre_muni'];
+                $_SESSION['super_admin'] = $usuario['super_admin'];
 
-                // Redirigir según el id_municipio
-                if ($usuario['id_municipio'] == 1) {
+                // Redirigir según si es super_admin o no
+                if ($usuario['super_admin'] == 1) {
                     $redirect = "admin.php";
                 } else {
                     $redirect = "PanelAdministrador";

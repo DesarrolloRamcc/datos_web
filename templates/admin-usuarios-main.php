@@ -1,6 +1,5 @@
 <?php
 require_once 'includes/auth.php';
-
 verificarSesion();
 
 $id_municipio = obtenerIdMunicipioActual();
