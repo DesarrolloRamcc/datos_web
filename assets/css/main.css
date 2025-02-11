@@ -1624,3 +1624,13 @@ section,
 .navmenu ul li a:hover {
   color: #0056b3; /* Change this to match your theme's primary color */
 }
+
+/* BTN ARBOLADO */
+.btn-arbolado {
+  background: #7f5539;
+  color: white;
+}
+
+.btn-arbolado:hover {
+  background: color-mix(in srgb, #7f5539, transparent 15%);
+}

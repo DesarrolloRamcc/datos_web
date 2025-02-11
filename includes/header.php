@@ -7,7 +7,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
         <a href="index.php" class="logo d-flex align-items-center me-auto">
-            <h1 class="sitename"><b>Sistema de carga</b></h1>
+            <img src="assets/img/ramcc.png" alt="Logo RAMCC" class="img-fluid">
+            <!-- <h1 class="sitename"><b>Sistema de carga</b></h1> -->
         </a>
 
         <nav id="navmenu" class="navmenu">
