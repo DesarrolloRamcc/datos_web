@@ -24,6 +24,9 @@
     <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
+    <!-- jQuery (necesario para Bootstrap y DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
@@ -49,9 +52,6 @@
 
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet">
-
-    <!-- jQuery (necesario para Bootstrap y DataTables) -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

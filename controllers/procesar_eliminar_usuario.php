@@ -4,11 +4,7 @@ require_once '../includes/conexion.php';
 require_once '../includes/auth.php';
 
 verificarSesion();
-
-if ($_SESSION['id_municipio'] != 1) {
-    echo json_encode(['success' => false, 'message' => 'No tiene permisos para realizar esta acción']);
-    exit;
-}
+verificarSuperAdmin();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_user = filter_var($_POST['id_user'], FILTER_SANITIZE_NUMBER_INT);

@@ -13,7 +13,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] && $_SESSION['id_municipio'] == 1): ?>
+                <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] && $_SESSION['super_admin'] == 1): ?>
                     <li><a href="admin.php" class="<?php echo ($current_page == 'admin') ? 'active' : ''; ?>">Usuarios</a></li>
                     <li><a href="admin-municipios.php" class="<?php echo ($current_page == 'admin-municipios') ? 'active' : ''; ?>">Municipios</a></li>
                 <?php endif; ?>

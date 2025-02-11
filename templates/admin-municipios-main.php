@@ -2,11 +2,7 @@
 require_once 'includes/auth.php';
 
 verificarSesion();
-
-if ($_SESSION['id_municipio'] != 1) {
-    header("Location: acceso_denegado.php");
-    exit;
-}
+verificarSuperAdmin();
 
 // Obtener listado de municipios
 $sql = "SELECT m.id_municipio, m.nombre_muni, p.nombre_provincia 

@@ -13,7 +13,7 @@ $stmt->execute();
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<!-- Botón Agregar Usuario -->
+<!-- Botón Agregar Usuario  y Tabla-->
 <div class="container mt-4 mb-5 ">
     <h1 class="text-center"><b>Usuarios</b></h1>
     <div class="d-flex justify-content-end mb-3 gap-2">
@@ -25,7 +25,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Tabla de Usuarios -->
     <div class="card">
         <div class="card-body">
-            <table id="tablaUsuarios" class="table table-striped table-hover">
+            <table id="tablaUsuarios" class="table table-striped table-hover table-responsive">
                 <thead>
                     <tr>
                         <th>Nombre y Apellido</th>
@@ -39,7 +39,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <tr>
                             <td><?php echo htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellido']); ?></td>
                             <td><?php echo htmlspecialchars($usuario['email']); ?></td>
-                            <td><?php echo $usuario['id_municipio'] ? htmlspecialchars($usuario['nombre_muni']) : 'N/A'; ?></td>
+                            <td><?php echo $usuario['id_municipio'] ? htmlspecialchars($usuario['nombre_muni']) : 'No tiene'; ?></td>
                             <td>
                                 <button class="btn btn-warning btn-sm me-2 btn-editar" data-id="<?php echo $usuario['id_user']; ?>">
                                     <i class="bi bi-pencil-fill"></i>
@@ -116,128 +116,177 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
+<!-- Modal Editar Usuario -->
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarUsuarioLabel"><b>Editar Usuario</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarUsuario">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_id_user" name="id_user">
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="edit_nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
+                    </div>
+                    <!-- Apellido -->
+                    <div class="mb-3">
+                        <label for="edit_apellido" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="edit_apellido" name="apellido" required>
+                    </div>
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="edit_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="edit_email" name="email" required>
+                    </div>
+                    <!-- Municipio -->
+                    <div class="mb-3">
+                        <label for="edit_id_municipio" class="form-label">Municipio</label>
+                        <select class="form-select" id="edit_id_municipio" name="id_municipio">
+                            <option value="">Seleccione un municipio</option>
+                            <?php
+                            $sqlMunicipios = "SELECT id, name FROM municipios ORDER BY name";
+                            $stmtMunicipios = $pdo->query($sqlMunicipios);
+                            while ($municipio = $stmtMunicipios->fetch(PDO::FETCH_ASSOC)) {
+                                echo '<option value="' . htmlspecialchars($municipio['id']) . '">' .
+                                    htmlspecialchars($municipio['name']) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <!-- Super Admin -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="edit_super_admin" name="super_admin">
+                        <label class="form-check-label" for="edit_super_admin">Super Administrador</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Script para cargar municipios en el select -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const selectMunicipio = document.getElementById('id_municipio');
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectMunicipio = document.getElementById('id_municipio');
 
-    // Función para cargar los municipios
-    function cargarMunicipios() {
-        fetch('controllers/obtener_municipios.php')
-            .then(response => response.json())
-            .then(data => {
-                selectMunicipio.innerHTML = '<option value="">Seleccione un municipio</option>';
-                data.forEach(municipio => {
-                    const option = document.createElement('option');
-                    option.value = municipio.id;
-                    option.textContent = municipio.name;
-                    selectMunicipio.appendChild(option);
-                });
+        // Función para cargar los municipios
+        function cargarMunicipios() {
+            fetch('controllers/obtener_municipios.php')
+                .then(response => response.json())
+                .then(data => {
+                    selectMunicipio.innerHTML = '<option value="">Seleccione un municipio</option>';
+                    data.forEach(municipio => {
+                        const option = document.createElement('option');
+                        option.value = municipio.id;
+                        option.textContent = municipio.name;
+                        selectMunicipio.appendChild(option);
+                    });
 
-                // Inicializar Select2
-                $(selectMunicipio).select2({
-                    dropdownParent: $('#modalAgregarUsuario'),
-                    placeholder: "Buscar municipio...",
-                    allowClear: true
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
+                    // Inicializar Select2
+                    $(selectMunicipio).select2({
+                        dropdownParent: $('#modalAgregarUsuario'),
+                        placeholder: "Buscar municipio...",
+                        allowClear: true
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
 
-    // Cargar municipios al abrir el modal
-    $('#modalAgregarUsuario').on('show.bs.modal', function() {
-        cargarMunicipios();
+        // Cargar municipios al abrir el modal
+        $('#modalAgregarUsuario').on('show.bs.modal', function() {
+            cargarMunicipios();
+        });
     });
-});
 </script>
 
 <!-- Script para procesar el formulario -->
 <script>
-document.getElementById('formAgregarUsuario').addEventListener('submit', function(e) {
-    e.preventDefault();
+    document.getElementById('formAgregarUsuario').addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    const formData = new FormData(this);
+        const formData = new FormData(this);
 
-    // Mostrar indicador de carga
-    Swal.fire({
-        title: 'Procesando...',
-        text: 'Por favor espere',
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        willOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    fetch('controllers/procesar_agregar_usuario.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Usuario agregado!',
-                text: 'El usuario ha sido cargado exitosamente',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                // Cerrar el modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarUsuario'));
-                modal.hide();
-
-                // Recargar la página
-                window.location.reload();
-            });
-        } else {
-            throw new Error(data.message || 'Error al agregar el usuario');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
+        // Mostrar indicador de carga
         Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.message || 'Ocurrió un error al procesar la solicitud'
+            title: 'Procesando...',
+            text: 'Por favor espere',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
         });
+
+        fetch('controllers/procesar_agregar_usuario.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Usuario agregado!',
+                        text: 'El usuario ha sido cargado exitosamente',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        // Cerrar el modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarUsuario'));
+                        modal.hide();
+
+                        // Recargar la página
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message || 'Error al agregar el usuario');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Ocurrió un error al procesar la solicitud'
+                });
+            });
     });
-});
 </script>
 
 <!-- Script para inicializar DataTables -->
 <script>
-$(document).ready(function() {
-    $('#tablaUsuarios').DataTable({
-        language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json',
-        },
-        responsive: true,
-        columnDefs: [{
-            targets: -1,
-            orderable: false,
-            searchable: false
-        }],
-        order: [
-            [0, 'asc']
-        ]
+    $(document).ready(function() {
+        $('#tablaUsuarios').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'
+            },
+            responsive: true,
+            columnDefs: [{
+                targets: -1,
+                orderable: false,
+                searchable: false
+            }],
+            order: [
+                [0, 'asc']
+            ],
+            pageLength: 10,
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, "Todos"]
+            ]
+        });
     });
-});
 </script>
 
-<!-- Estilos adicionales -->
-<style>
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-
-.bi {
-    font-size: 1rem;
-}
-</style>
-
-<!-- Script para eliminar y borrar usuarios -->
+<!-- Script para eliminar y editar usuarios -->
 <script>
     // Función para cargar datos del usuario en el modal de edición
     function cargarDatosUsuario(id) {
@@ -247,9 +296,25 @@ $(document).ready(function() {
             document.getElementById('edit_nombre').value = usuario.nombre;
             document.getElementById('edit_apellido').value = usuario.apellido;
             document.getElementById('edit_email').value = usuario.email;
-            document.getElementById('edit_id_municipio').value = usuario.id_municipio;
+            document.getElementById('edit_id_municipio').value = usuario.id_municipio || '';
+            document.getElementById('edit_super_admin').checked = usuario.super_admin == 1;
+
+            // Deshabilitar el select de municipio si el usuario es super_admin
+            const selectMunicipio = document.getElementById('edit_id_municipio');
+            selectMunicipio.disabled = usuario.super_admin == 1;
         }
     }
+
+    // Event listener para el checkbox de super_admin
+    document.getElementById('edit_super_admin').addEventListener('change', function() {
+        const selectMunicipio = document.getElementById('edit_id_municipio');
+        if (this.checked) {
+            selectMunicipio.value = '';
+            selectMunicipio.disabled = true;
+        } else {
+            selectMunicipio.disabled = false;
+        }
+    });
 
     // Event listener para botones de editar
     document.querySelectorAll('.btn-editar').forEach(btn => {
@@ -265,6 +330,18 @@ $(document).ready(function() {
     document.getElementById('formEditarUsuario').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
+
+        // Validación
+        const superAdmin = formData.get('super_admin') === 'on';
+        const municipio = formData.get('id_municipio');
+        if (superAdmin && municipio) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Un usuario no puede ser super administrador y tener un municipio asignado al mismo tiempo.'
+            });
+            return;
+        }
 
         fetch('controllers/procesar_editar_usuario.php', {
                 method: 'POST',
@@ -372,52 +449,15 @@ $(document).ready(function() {
         });
     });
 </script>
-<!-- Modal Editar Usuario -->
-<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarUsuarioLabel"><b>Editar Usuario</b></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="formEditarUsuario">
-                <div class="modal-body">
-                    <input type="hidden" id="edit_id_user" name="id_user">
-                    <!-- Nombre -->
-                    <div class="mb-3">
-                        <label for="edit_nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
-                    </div>
-                    <!-- Apellido -->
-                    <div class="mb-3">
-                        <label for="edit_apellido" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="edit_apellido" name="apellido" required>
-                    </div>
-                    <!-- Email -->
-                    <div class="mb-3">
-                        <label for="edit_email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="edit_email" name="email" required>
-                    </div>
-                    <!-- Municipio -->
-                    <div class="mb-3">
-                        <label for="edit_id_municipio" class="form-label">Municipio</label>
-                        <select class="form-select" id="edit_id_municipio" name="id_municipio" required>
-                            <?php
-                            $sqlMunicipios = "SELECT id_municipio, nombre_muni FROM municipios ORDER BY nombre_muni";
-                            $stmtMunicipios = $pdo->query($sqlMunicipios);
-                            while ($municipio = $stmtMunicipios->fetch(PDO::FETCH_ASSOC)) {
-                                echo '<option value="' . htmlspecialchars($municipio['id_municipio']) . '">' .
-                                    htmlspecialchars($municipio['nombre_muni']) . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
+<!-- Estilos adicionales -->
+<style>
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .bi {
+        font-size: 1rem;
+    }
+</style>
