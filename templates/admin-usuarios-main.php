@@ -2,8 +2,16 @@
 require_once 'includes/auth.php';
 verificarSesion();
 
-$id_municipio = obtenerIdMunicipioActual();
-$nombre_municipio = $_SESSION['nombre_municipio'] ?? 'Municipio';
+$id_municipio = $_SESSION['id_municipio'] ?? null;
+$nombre_municipio = '';
+
+if ($id_municipio) {
+    // Obtener el nombre del municipio
+    $stmt = $pdo->prepare("SELECT name FROM municipios WHERE id = ?");
+    $stmt->execute([$id_municipio]);
+    $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
+    $nombre_municipio = $municipio['name'] ?? 'Municipio Desconocido';
+}
 ?>
 
 <div class="container mt-5">
