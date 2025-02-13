@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row d-flex justify-content-center text-center">
                 <div class="col-lg-8">
-                    <h1 class="text-white">Iniciar Sesión</h1>
+                    <h1 class="text-white">Bienvenidos al sistema de <br>autogestion de acciones RAMCC</h1>
                 </div>
             </div>
         </div>

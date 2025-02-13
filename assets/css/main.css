@@ -200,20 +200,37 @@ h6 {
 # Global Header
 --------------------------------------------------------------*/
 .header {
-  color: var(--default-color);
-  background-color: #ced4da;
+  color: var(--contrast-color);
+  background-color: #285152;
   padding: 15px 0;
   transition: all 0.5s;
   z-index: 997;
 }
 
-.header .logo {
-  line-height: 1;
+/* Alineación predeterminada: a la izquierda en pantallas grandes */
+.header .container-fluid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
+/* Centrar el logo en móviles */
+@media (max-width: 768px) {
+  .header .container-fluid {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+  }
+
+  .header .logo {
+      margin-bottom: 10px; /* Espacio entre logo y otros elementos */
+  }
+}
+
+
 .header .logo img {
-  max-height: 36px;
-  margin-right: 8px;
+  max-height: 75px;
+  margin-right: 10px;
 }
 
 .header .logo h1 {
@@ -258,6 +275,21 @@ h6 {
   color: var(--contrast-color);
   background: color-mix(in srgb, var(--accent-color), transparent 15%);
 }
+
+@media (max-width: 768px) {
+  .header .btn-logout {
+    font-size: 12px; /* Reducir el tamaño de la fuente */
+    padding: 5px 12px; /* Menos padding para que no se vea tan grande */
+    margin: 5px auto; /* Centrarlo y evitar márgenes excesivos */
+    display: flex; /* Asegura que el botón se mantenga bien alineado */
+    align-items: center;
+    justify-content: center;
+    width: auto; /* Evita que se haga demasiado ancho */
+    min-width: 100px; /* Establece un tamaño mínimo razonable */
+    border-radius: 8px; /* Menos redondeado para que se vea más elegante */
+  }
+}
+
 
 @media (max-width: 1200px) {
   .header .logo {
@@ -679,7 +711,7 @@ h6 {
 }
 
 .page-title .heading h1 {
-  font-size: 38px;
+  font-size: 30px;
   font-weight: 700;
 }
 
