@@ -1,6 +1,23 @@
 <?php
 //INCLUDE HEAD
-include_once 'includes/head.php';
+require_once 'includes/head.php';
+require_once 'includes/auth.php';
+
+verificarSesion();
+
+$nombre_municipio = $_GET['nombre_municipio'] ?? '';
+$nombre_municipio = urldecode($nombre_municipio);
+
+$stmt = $pdo->prepare("SELECT id FROM municipios WHERE name = ?");
+$stmt->execute([$nombre_municipio]);
+$resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+$id_municipio = $resultado['id'] ?? null;
+
+if (!$id_municipio) {
+    die("Error: No se encontró un municipio válido.");
+}
+
+verificarAccesoMunicipio($id_municipio);
 ?>
 
 <body class="index-page">

@@ -38,3 +38,30 @@ function cerrarSesion() {
     header("Location: InicioDeSesion");
     exit;
 }
+
+function verificarAccesoMunicipio($id_municipio_solicitado) {
+    verificarSesion();
+    $id_municipio_usuario = $_SESSION['id_municipio'] ?? null;
+
+    if ($id_municipio_usuario === null) {
+        // Si el usuario no tiene un municipio asociado, redirigir a una página de error
+        header("Location: error.php?mensaje=No tienes un municipio asociado");
+        exit;
+    }
+
+    if ($id_municipio_usuario != $id_municipio_solicitado) {
+        // Si el municipio solicitado no coincide con el del usuario, redirigir al correcto
+        $nombre_municipio = obtenerNombreMunicipio($id_municipio_usuario);
+        header("Location: Arbolado_" . urlencode($nombre_municipio));
+        exit;
+    }
+}
+
+// Función para obtener el nombre del municipio
+function obtenerNombreMunicipio($id_municipio) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT name FROM municipios WHERE id = ?");
+    $stmt->execute([$id_municipio]);
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $resultado['name'] ?? 'Municipio Desconocido';
+}

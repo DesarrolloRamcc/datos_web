@@ -12,3 +12,12 @@ RewriteRule ^$ index.php [L]
 # Redirigir URLs amigables
 RewriteRule ^InicioDeSesion$ login.php [L]
 RewriteRule ^PanelAdministrador$ admin-usuarios.php [L]
+
+# Redirigir arbolado.php a Arbolado_NombreMunicipio
+RewriteCond %{THE_REQUEST} \s/+arbolado\.php\?id_municipio=([^\s&]+) [NC]
+RewriteRule ^ Arbolado_%1? [R=301,L]
+
+# Reescribir internamente Arbolado_NombreMunicipio a arbolado.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^Arbolado_(.+)/?$ arbolado.php?nombre_municipio=$1 [L,QSA]

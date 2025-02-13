@@ -1,14 +1,5 @@
 <?php
-require_once 'includes/auth.php';
 require_once 'includes/conexion.php';
-
-verificarSesion();
-
-$id_municipio = $_GET['id_municipio'] ?? null;
-
-if (!$id_municipio) {
-    die("Error: No se proporcionó un ID de municipio válido.");
-}
 
 // Obtener el nombre del municipio
 $stmt = $pdo->prepare("SELECT name FROM municipios WHERE id = ?");
