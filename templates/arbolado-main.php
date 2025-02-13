@@ -98,18 +98,25 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         #tablaArboles thead {
             display: none;
         }
-        #tablaArboles, #tablaArboles tbody, #tablaArboles tr, #tablaArboles td {
+
+        #tablaArboles,
+        #tablaArboles tbody,
+        #tablaArboles tr,
+        #tablaArboles td {
             display: block;
             width: 100%;
         }
+
         #tablaArboles tr {
             margin-bottom: 15px;
         }
+
         #tablaArboles td {
             text-align: right;
             padding-left: 50%;
             position: relative;
         }
+
         #tablaArboles td:before {
             content: attr(data-label);
             position: absolute;
@@ -121,11 +128,69 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
             font-weight: bold;
         }
     }
+
     .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
     }
+
     .bi {
         font-size: 1rem;
     }
 </style>
+
+<?php include 'templates/nueva_carga_arbolado.php'; ?>
+
+<!-- AGREGAR CARGA -->
+<script>
+    document.getElementById('formAgregarArbol').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        let formData = new FormData(this);
+
+        fetch('controllers/agregar_carga_arbolado.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al procesar la solicitud'
+                });
+            });
+    });
+
+    // Validación de imagen
+    document.getElementById('imagen').addEventListener('change', function(e) {
+        if (this.files.length > 1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir una imagen'
+            });
+            this.value = '';
+        }
+    });
+</script>
