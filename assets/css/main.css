@@ -557,8 +557,8 @@ h6 {
 # Global Footer
 --------------------------------------------------------------*/
 .footer {
-  color: var(--default-color);
-  background-color: #ced4da;
+  color: var(--contrast-color);
+  background-color: var(--accent-color);
   font-size: 14px;
   text-align: center;
   padding: 30px 0;
@@ -589,8 +589,8 @@ h6 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-color);
-  color: var(--contrast-color);
+  background: var(--contrast-color);
+  color: black;
   line-height: 1;
   margin: 0 4px;
   border-radius: 50%;
@@ -601,7 +601,7 @@ h6 {
 }
 
 .footer .social-links a:hover {
-  background: color-mix(in srgb, var(--accent-color), transparent 20%);
+  background: color-mix(in srgb, var(--contrast-color), transparent 50%);
   text-decoration: none;
 }
 

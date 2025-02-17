@@ -1,4 +1,6 @@
 <?php
+session_start();
+session_destroy();
 //INCLUDE HEAD
 include_once 'includes/head.php';
 ?>

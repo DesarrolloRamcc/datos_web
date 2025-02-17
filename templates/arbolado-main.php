@@ -14,8 +14,8 @@ $stmt->execute([$id_municipio]);
 $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container mt-4 mb-5">
-    <h1 class="text-center"><b>Arbolado de <?php echo htmlspecialchars($nombre_municipio); ?></b></h1>
+<div class="container-fluid px-4">
+    <h1 class="text-center m-4"><b>Arbolado de <?php echo htmlspecialchars($nombre_municipio); ?></b></h1>
     <div class="d-flex justify-content-end mb-3">
         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalAgregarArbol">
             <i class="bi bi-plus-circle me-2"></i>Agregar Árbol
@@ -23,7 +23,7 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Tabla de Árboles (visible en pantallas grandes) -->
-    <div class="card d-none d-md-block">
+    <div class="card d-none d-md-block overflow-hidden mb-5">
         <div class="card-body">
             <table id="tablaArboles" class="table table-striped table-hover">
                 <thead>
@@ -56,7 +56,7 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Tarjetas de Árboles (visibles en pantallas pequeñas) -->
-    <div class="d-md-none">
+    <div class="d-md-none mb-5">
         <div id="tarjetasArboles" class="row row-cols-1 g-4">
             <?php foreach ($arboles as $arbol): ?>
                 <div class="col">
@@ -82,22 +82,50 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <style>
+    /* Estilos actualizados */
+    .container-fluid {
+        max-width: 1400px;
+        /* Limitar el ancho máximo */
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 0;
+    }
+
+    /* Ajustes para DataTables */
+    .dataTables_wrapper {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /* Ajustes para móviles */
     @media (max-width: 767.98px) {
+        .container-fluid {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
         .card-body {
             padding: 0.5rem;
         }
+
         .card-title {
             font-size: 1rem;
         }
+
         .card-text {
             font-size: 0.875rem;
         }
+
         .btn-sm {
             padding: 0.25rem 0.5rem;
             font-size: 0.75rem;
         }
     }
 </style>
+
 
 <!-- Script para inicializar DataTables -->
 <script>
@@ -107,6 +135,8 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'
             },
             responsive: true,
+            scrollX: false, // Desactivar scroll horizontal
+            autoWidth: false, // Desactivar auto-width
             columnDefs: [{
                 targets: -1,
                 orderable: false,
