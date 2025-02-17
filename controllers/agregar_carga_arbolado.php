@@ -4,6 +4,8 @@ require_once '../includes/auth.php';
 
 verificarSesion();
 
+header('Content-Type: application/json');
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $date = $_POST['date'];
     $cantidad = $_POST['cantidad'];
@@ -31,23 +33,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Manejo de la imagen
         if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
-            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+            $allowed = ['jpg', 'jpeg', 'png'];
             $filename = $_FILES['imagen']['name'];
             $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
             if (!in_array($ext, $allowed)) {
-                throw new Exception('Formato de imagen no permitido');
+                throw new Exception('Formato de imagen no permitido. Use JPG, JPEG o PNG.');
             }
 
             $new_filename = 'carga_arbol_' . $id_arbol . '.' . $ext;
             $upload_path = '../uploads/arbolado/' . $new_filename;
-            $db_path = './uploads/arbolado/' . $new_filename; // Ruta para guardar en la base de datos
+            $db_path = './uploads/arbolado/' . $new_filename;
+
+            if (!file_exists('../uploads/arbolado/')) {
+                mkdir('../uploads/arbolado/', 0777, true);
+            }
 
             if (!move_uploaded_file($_FILES['imagen']['tmp_name'], $upload_path)) {
                 throw new Exception('Error al subir la imagen');
             }
 
-            // Actualizar el registro con la ruta completa de la imagen
+            // Actualizar el registro con la ruta de la imagen
             $sql = "UPDATE contadorarboles SET imagen = ? WHERE id = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$db_path, $id_arbol]);

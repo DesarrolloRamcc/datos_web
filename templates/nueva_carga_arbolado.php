@@ -35,7 +35,7 @@
                         <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="imagen" class="form-label fw-bold">Imagen</label>
+                        <label for="imagen" class="form-label fw-bold">Imagen (formato jpg, jpeg, png)</label>
                         <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
                     </div>
                     <input type="hidden" id="municipio" name="municipio" value="<?php echo $_SESSION['id_municipio']; ?>">

@@ -186,7 +186,10 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     });
 </script>
 
-<?php include 'templates/nueva_carga_arbolado.php'; ?>
+<?php
+include 'templates/nueva_carga_arbolado.php';
+include 'templates/editar_carga_arbolado.php';
+?>
 
 <!-- AGREGAR CARGA -->
 <script>
@@ -231,6 +234,109 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Validación de imagen
     document.getElementById('imagen').addEventListener('change', function(e) {
+        if (this.files.length > 1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir una imagen'
+            });
+            this.value = '';
+        }
+    });
+</script>
+
+<!-- MODIFICAR CARGA -->
+<script>
+    // Manejar clic en botón editar
+    document.querySelectorAll('.btn-editar').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+
+            fetch(`controllers/obtener_carga_arbolado.php?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('edit_id').value = data.arbol.id;
+                        document.getElementById('edit_date').value = data.arbol.date;
+                        document.getElementById('edit_cantidad').value = data.arbol.cantidad;
+                        document.getElementById('edit_especie').value = data.arbol.especie;
+                        document.getElementById('edit_publicoprivado').value = data.arbol.publicoprivado;
+                        document.getElementById('edit_quienLoPlanto').value = data.arbol.quienLoPlanto;
+                        document.getElementById('edit_descripcion').value = data.arbol.descripcion;
+
+                        const imagenActualDiv = document.getElementById('imagenActual');
+                        if (data.arbol.imagen) {
+                            imagenActualDiv.innerHTML = `
+                            <p>Imagen actual:</p>
+                            <img src="${data.arbol.imagen}" class="img-thumbnail" style="max-width: 200px">
+                        `;
+                        } else {
+                            imagenActualDiv.innerHTML = '<p>No hay imagen actual</p>';
+                        }
+
+                        const modal = new bootstrap.Modal(document.getElementById('modalEditarArbol'));
+                        modal.show();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar los datos'
+                    });
+                });
+        });
+    });
+
+    // Manejar envío del formulario de edición
+    document.getElementById('formEditarArbol').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        let formData = new FormData(this);
+
+        fetch('controllers/modificar_carga_arbolado.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al procesar la solicitud'
+                });
+            });
+    });
+
+    // Validación de imagen en el formulario de edición
+    document.getElementById('edit_imagen').addEventListener('change', function(e) {
         if (this.files.length > 1) {
             Swal.fire({
                 icon: 'error',
