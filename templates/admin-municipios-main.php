@@ -52,38 +52,41 @@ $municipios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <script>
-// Inicializar DataTables
-$(document).ready(function() {
-    $('#tablaMunicipios').DataTable({
-        language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'        },
-        responsive: true,
-        columnDefs: [{
-            targets: -1,
-            orderable: false,
-            searchable: false
-        }],
-        order: [[0, 'asc']]
+    // Inicializar DataTables
+    $(document).ready(function() {
+        $('#tablaMunicipios').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'
+            },
+            responsive: true,
+            columnDefs: [{
+                targets: -1,
+                orderable: false,
+                searchable: false
+            }],
+            order: [
+                [0, 'asc']
+            ]
+        });
     });
-});
 
-// Event listener para botones de detalle
-document.querySelectorAll('.btn-detalle').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const municipioId = this.getAttribute('data-id');
-        // Redirigir a la página de detalle del municipio
-        window.location.href = `detalle_municipio.php?id=${municipioId}`;
+    // Event listener para botones de detalle
+    document.querySelectorAll('.btn-detalle').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const municipioId = this.getAttribute('data-id');
+            // Redirigir a la página de detalle del municipio
+            window.location.href = `detalle_municipio.php?id=${municipioId}`;
+        });
     });
-});
 </script>
 
 <style>
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
 
-.bi {
-    font-size: 1rem;
-}
+    .bi {
+        font-size: 1rem;
+    }
 </style>

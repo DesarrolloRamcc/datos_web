@@ -42,6 +42,12 @@ function cerrarSesion() {
 function verificarAccesoMunicipio($id_municipio_solicitado) {
     verificarSesion();
     $id_municipio_usuario = $_SESSION['id_municipio'] ?? null;
+    $es_super_admin = $_SESSION['super_admin'] ?? false;
+
+    if ($es_super_admin) {
+        // Los superadmins tienen acceso a todos los municipios
+        return;
+    }
 
     if ($id_municipio_usuario === null) {
         // Si el usuario no tiene un municipio asociado, redirigir a una página de error
@@ -57,6 +63,14 @@ function verificarAccesoMunicipio($id_municipio_solicitado) {
     }
 }
 
+function tieneAccesoMunicipio($id_municipio) {
+    iniciarSesion();
+    $es_super_admin = $_SESSION['super_admin'] ?? false;
+    $id_municipio_usuario = $_SESSION['id_municipio'] ?? null;
+
+    return $es_super_admin || $id_municipio_usuario == $id_municipio;
+}
+
 // Función para obtener el nombre del municipio
 function obtenerNombreMunicipio($id_municipio) {
     global $pdo;
@@ -64,4 +78,9 @@ function obtenerNombreMunicipio($id_municipio) {
     $stmt->execute([$id_municipio]);
     $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
     return $resultado['name'] ?? 'Municipio Desconocido';
+}
+
+function esSuperAdmin() {
+    iniciarSesion();
+    return isset($_SESSION['super_admin']) && $_SESSION['super_admin'] == 1;
 }

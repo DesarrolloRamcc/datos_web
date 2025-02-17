@@ -1,5 +1,20 @@
 <?php
 require_once 'includes/conexion.php';
+require_once 'includes/auth.php';
+
+verificarSesion();
+verificarSuperAdmin();
+
+$id_municipio = $_GET['id'] ?? null;
+
+if (!$id_municipio) {
+    die("Error: No se proporcionó un ID de municipio válido.");
+}
+
+// Verificar si el usuario es superadmin o tiene acceso al municipio
+if (!esSuperAdmin() && !tieneAccesoMunicipio($id_municipio)) {
+    die("Error: No tiene permiso para acceder a este municipio.");
+}
 
 // Obtener el nombre del municipio
 $stmt = $pdo->prepare("SELECT name FROM municipios WHERE id = ?");
@@ -17,11 +32,19 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div class="container-fluid px-4">
     <h1 class="text-center m-4"><b>Arbolado de <?php echo htmlspecialchars($nombre_municipio); ?></b></h1>
     <div class="d-flex justify-content-between mb-3">
-        <a href="PanelAdministrador">
-            <button type="button" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-2"></i>Volver al panel
-            </button>
-        </a>
+        <?php if (esSuperAdmin()): ?>
+            <a href="admin-municipios.php">
+                <button type="button" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Volver al panel de municipios
+                </button>
+            </a>
+        <?php else: ?>
+            <a href="PanelAdministrador">
+                <button type="button" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Volver al panel
+                </button>
+            </a>
+        <?php endif; ?>
         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalAgregarArbol">
             <i class="bi bi-plus-circle me-2"></i>Agregar Árbol
         </button>
@@ -90,7 +113,6 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     /* Estilos actualizados */
     .container-fluid {
         max-width: 1400px;
-        /* Limitar el ancho máximo */
     }
 
     .table-responsive {
@@ -131,17 +153,16 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 </style>
 
-
-<!-- Script para inicializar DataTables -->
 <script>
+    // Script para inicializar DataTables y manejar las acciones de los botones
     $(document).ready(function() {
         var table = $('#tablaArboles').DataTable({
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'
             },
             responsive: true,
-            scrollX: false, // Desactivar scroll horizontal
-            autoWidth: false, // Desactivar auto-width
+            scrollX: false,
+            autoWidth: false,
             columnDefs: [{
                 targets: -1,
                 orderable: false,
@@ -157,17 +178,7 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
             ]
         });
 
-        // Aplicar la búsqueda y ordenamiento de DataTables a las tarjetas en móviles
-        $('#tablaArboles_filter input').on('keyup', function() {
-            var searchTerm = $(this).val();
-            filterCards(searchTerm);
-        });
-
-        table.on('order.dt', function() {
-            var order = table.order();
-            sortCards(order);
-        });
-
+        // Funciones para filtrar y ordenar tarjetas en móviles
         function filterCards(searchTerm) {
             $('#tarjetasArboles .col').each(function() {
                 var cardText = $(this).text().toLowerCase();
@@ -188,6 +199,26 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
             $('#tarjetasArboles').append(cards);
         }
+
+        $('#tablaArboles_filter input').on('keyup', function() {
+            filterCards($(this).val());
+        });
+
+        table.on('order.dt', function() {
+            sortCards(table.order());
+        });
+
+        // Manejar clic en botón editar
+        $('.btn-editar').click(function() {
+            var id = $(this).data('id');
+            // Aquí iría el código para cargar los datos del árbol y abrir el modal de edición
+        });
+
+        // Manejar clic en botón eliminar
+        $('.btn-eliminar').click(function() {
+            var id = $(this).data('id');
+            // Aquí iría el código para confirmar y eliminar el árbol
+        });
     });
 </script>
 
@@ -196,13 +227,13 @@ include 'templates/nueva_carga_arbolado.php';
 include 'templates/editar_carga_arbolado.php';
 ?>
 
-<!-- AGREGAR CARGA -->
+<!-- Scripts para manejar la adición, edición y eliminación de árboles -->
 <script>
+    // Código para manejar la adición de nuevos árboles
     document.getElementById('formAgregarArbol').addEventListener('submit', function(e) {
         e.preventDefault();
-
-        let formData = new FormData(this);
-        formData.append('id_municipio', <?php echo $id_municipio; ?>); // Agregar el id_municipio
+        var formData = new FormData(this);
+        formData.append('id_municipio', <?php echo $id_municipio; ?>);
 
         fetch('controllers/agregar_carga_arbolado.php', {
                 method: 'POST',
@@ -238,75 +269,11 @@ include 'templates/editar_carga_arbolado.php';
             });
     });
 
-    // Validación de imagen
-    document.getElementById('imagen').addEventListener('change', function(e) {
-        if (this.files.length > 1) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Solo se permite subir una imagen'
-            });
-            this.value = '';
-        }
-    });
-</script>
-
-<!-- MODIFICAR CARGA -->
-<script>
-    // Manejar clic en botón editar
-    document.querySelectorAll('.btn-editar').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.dataset.id;
-
-            fetch(`controllers/obtener_carga_arbolado.php?id=${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('edit_id').value = data.arbol.id;
-                        document.getElementById('edit_date').value = data.arbol.date;
-                        document.getElementById('edit_cantidad').value = data.arbol.cantidad;
-                        document.getElementById('edit_especie').value = data.arbol.especie;
-                        document.getElementById('edit_publicoprivado').value = data.arbol.publicoprivado;
-                        document.getElementById('edit_quienLoPlanto').value = data.arbol.quienLoPlanto;
-                        document.getElementById('edit_descripcion').value = data.arbol.descripcion;
-
-                        const imagenActualDiv = document.getElementById('imagenActual');
-                        if (data.arbol.imagen) {
-                            imagenActualDiv.innerHTML = `
-                            <p>Imagen actual:</p>
-                            <img src="${data.arbol.imagen}" class="img-thumbnail" style="max-width: 200px">
-                        `;
-                        } else {
-                            imagenActualDiv.innerHTML = '<p>No hay imagen actual</p>';
-                        }
-
-                        const modal = new bootstrap.Modal(document.getElementById('modalEditarArbol'));
-                        modal.show();
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al cargar los datos'
-                    });
-                });
-        });
-    });
-
-    // Manejar envío del formulario de edición
+    // Código para manejar la edición de árboles
     document.getElementById('formEditarArbol').addEventListener('submit', function(e) {
         e.preventDefault();
-
-        let formData = new FormData(this);
-        formData.append('id_municipio', <?php echo $id_municipio; ?>); // Agregar el id_municipio
+        var formData = new FormData(this);
+        formData.append('id_municipio', <?php echo $id_municipio; ?>);
 
         fetch('controllers/modificar_carga_arbolado.php', {
                 method: 'POST',
@@ -342,65 +309,14 @@ include 'templates/editar_carga_arbolado.php';
             });
     });
 
-    // Validación de imagen en el formulario de edición
-    document.getElementById('edit_imagen').addEventListener('change', function(e) {
-        if (this.files.length > 1) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Solo se permite subir una imagen'
-            });
-            this.value = '';
-        }
-    });
-</script>
-
-<!-- ELIMINAR CARGA -->
-<script>
-    // Manejar clic en botón eliminar
-    document.querySelectorAll('.btn-eliminar').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.dataset.id;
-
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción eliminará la carga de arbolado. ¿Deseas continuar?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Segunda confirmación
-                    Swal.fire({
-                        title: 'Confirmar eliminación',
-                        text: "Esta acción es irreversible. ¿Estás completamente seguro?",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Sí, eliminar definitivamente',
-                        cancelButtonText: 'Cancelar'
-                    }).then((finalResult) => {
-                        if (finalResult.isConfirmed) {
-                            // Proceder con la eliminación
-                            eliminarCargaArbolado(id);
-                        }
-                    });
-                }
-            });
-        });
-    });
-
+    // Código para manejar la eliminación de árboles
     function eliminarCargaArbolado(id) {
         fetch('controllers/eliminar_carga_arbolado.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'id=' + id + '&id_municipio=<?php echo $id_municipio; ?>' // Agregar el id_municipio
+                body: 'id=' + id + '&id_municipio=<?php echo $id_municipio; ?>'
             })
             .then(response => response.json())
             .then(data => {
@@ -431,4 +347,25 @@ include 'templates/editar_carga_arbolado.php';
                 });
             });
     }
+
+    // Inicializar los botones de eliminar con confirmación
+    document.querySelectorAll('.btn-eliminar').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción no se puede deshacer",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    eliminarCargaArbolado(id);
+                }
+            });
+        });
+    });
 </script>

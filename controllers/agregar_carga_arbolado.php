@@ -13,11 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $publicoprivado = $_POST['publicoprivado'];
     $quienLoPlanto = $_POST['quienLoPlanto'];
     $descripcion = $_POST['descripcion'];
-    $municipio = $_POST['municipio'];
+    $municipio = $_POST['id_municipio']; // Cambiado de 'municipio' a 'id_municipio'
 
-    // Validar que el municipio del usuario coincida con el enviado
-    if ($municipio != $_SESSION['id_municipio']) {
-        echo json_encode(['success' => false, 'message' => 'Error de autenticación']);
+    // Verificar si el usuario es superadmin o tiene acceso al municipio
+    if (!esSuperAdmin() && !tieneAccesoMunicipio($municipio)) {
+        echo json_encode(['success' => false, 'message' => 'No tiene permiso para agregar árboles a este municipio']);
         exit;
     }
 

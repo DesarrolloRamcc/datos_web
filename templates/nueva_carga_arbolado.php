@@ -38,7 +38,8 @@
                         <label for="imagen" class="form-label fw-bold">Imagen (formato jpg, jpeg, png)</label>
                         <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
                     </div>
-                    <input type="hidden" id="municipio" name="municipio" value="<?php echo $_SESSION['id_municipio']; ?>">
+                    <!-- Reemplazar la línea comentada con -->
+                    <input type="hidden" id="municipio" name="municipio" value="<?php echo $id_municipio; ?>">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

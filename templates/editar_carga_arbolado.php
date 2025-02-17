@@ -40,8 +40,9 @@
                         <input type="file" class="form-control" id="edit_imagen" name="imagen" accept="image/*">
                         <div id="imagenActual" class="mt-2"></div>
                     </div>
-                    <input type="hidden" id="edit_municipio" name="municipio" value="<?php echo $_SESSION['id_municipio']; ?>">
                 </div>
+                <!-- Reemplazar la línea comentada con -->
+                <input type="hidden" id="edit_municipio" name="municipio" value="<?php echo $id_municipio; ?>">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Guardar cambios</button>

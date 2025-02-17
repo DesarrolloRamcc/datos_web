@@ -7,23 +7,26 @@ verificarSesion();
 header('Content-Type: application/json');
 
 try {
-    if (!isset($_POST['id'])) {
-        throw new Exception('ID no proporcionado');
+    if (!isset($_POST['id']) || !isset($_POST['id_municipio'])) {
+        throw new Exception('ID o ID de municipio no proporcionado');
     }
 
     $id = $_POST['id'];
+    $id_municipio = $_POST['id_municipio'];
+
+    // Verificar si el usuario es superadmin o tiene acceso al municipio
+    if (!esSuperAdmin() && !tieneAccesoMunicipio($id_municipio)) {
+        throw new Exception('No tiene permiso para eliminar este arbolado');
+    }
 
     // Verificar que el registro existe y obtener la información de la imagen
     $stmt = $pdo->prepare("SELECT municipio, imagen FROM contadorarboles WHERE id = ?");
     $stmt->execute([$id]);
     $arbol = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$arbol) {
-        throw new Exception('Registro no encontrado');
+    if (!$arbol || $arbol['municipio'] != $id_municipio) {
+        throw new Exception('Registro no encontrado o no pertenece al municipio especificado');
     }
-
-    // Verificar que el usuario tiene acceso a este municipio
-    verificarAccesoMunicipio($arbol['municipio']);
 
     // Iniciar transacción
     $pdo->beginTransaction();
