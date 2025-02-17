@@ -16,7 +16,12 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <div class="container-fluid px-4">
     <h1 class="text-center m-4"><b>Arbolado de <?php echo htmlspecialchars($nombre_municipio); ?></b></h1>
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-between mb-3">
+        <a href="PanelAdministrador">
+            <button type="button" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Volver al panel
+            </button>
+        </a>
         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalAgregarArbol">
             <i class="bi bi-plus-circle me-2"></i>Agregar Árbol
         </button>
@@ -346,4 +351,82 @@ include 'templates/editar_carga_arbolado.php';
             this.value = '';
         }
     });
+</script>
+
+<!-- ELIMINAR CARGA -->
+<script>
+    // Manejar clic en botón eliminar
+    document.querySelectorAll('.btn-eliminar').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción eliminará la carga de arbolado. ¿Deseas continuar?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Segunda confirmación
+                    Swal.fire({
+                        title: 'Confirmar eliminación',
+                        text: "Esta acción es irreversible. ¿Estás completamente seguro?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminar definitivamente',
+                        cancelButtonText: 'Cancelar'
+                    }).then((finalResult) => {
+                        if (finalResult.isConfirmed) {
+                            // Proceder con la eliminación
+                            eliminarCargaArbolado(id);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    function eliminarCargaArbolado(id) {
+        fetch('controllers/eliminar_carga_arbolado.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id=' + id
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al procesar la solicitud'
+                });
+            });
+    }
 </script>
