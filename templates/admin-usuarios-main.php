@@ -29,10 +29,25 @@ if ($id_municipio) {
             </a>
         </div>
         <div class="col-md-5 mb-5">
-            <a href="residuos.php?id_municipio=<?php echo $id_municipio; ?>" class="btn btn-success btn-lg w-100 py-5 d-flex flex-column align-items-center justify-content-center">
+            <button id="btnResiduos" class="btn btn-success btn-lg w-100 py-5 d-flex flex-column align-items-center justify-content-center">
                 <i class="bi bi-recycle" style="font-size: 4rem;"></i>
                 <span class="mt-3" style="font-size: 1.5rem;">Residuos</span>
-            </a>
+            </button>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnResiduos = document.getElementById('btnResiduos');
+    btnResiduos.addEventListener('click', function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'En proceso...',
+            text: 'Esta carga estará disponible proximamente.',
+            icon: 'info',
+            confirmButtonText: 'Entendido'
+        });
+    });
+});
+</script>
