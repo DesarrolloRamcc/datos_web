@@ -14,7 +14,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="edit_cantidad" class="form-label fw-bold">Cantidad</label>
-                        <input type="number" class="form-control" id="edit_cantidad" name="cantidad" required>
+                        <input type="number" class="form-control" id="edit_cantidad" name="cantidad" min="1" required>
                     </div>
                     <div class="mb-3">
                         <label for="edit_especie" class="form-label fw-bold">Especie</label>
@@ -29,7 +29,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="edit_quienLoPlanto" class="form-label fw-bold">Quién lo plantó</label>
-                        <input type="text" class="form-control" id="edit_quienLoPlanto" name="quienLoPlanto">
+                        <input type="text" class="form-control" id="edit_quienLoPlanto" name="quienLoPlanto" required>
                     </div>
                     <div class="mb-3">
                         <label for="edit_descripcion" class="form-label fw-bold">Descripción</label>

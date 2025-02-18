@@ -13,7 +13,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="cantidad" class="form-label fw-bold">Cantidad</label>
-                        <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+                        <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" required>
                     </div>
                     <div class="mb-3">
                         <label for="especie" class="form-label fw-bold">Especie</label>
@@ -28,7 +28,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="quienLoPlanto" class="form-label fw-bold">Quién lo plantó</label>
-                        <input type="text" class="form-control" id="quienLoPlanto" name="quienLoPlanto">
+                        <input type="text" class="form-control" id="quienLoPlanto" name="quienLoPlanto" required>
                     </div>
                     <div class="mb-3">
                         <label for="descripcion" class="form-label fw-bold">Descripción</label>
