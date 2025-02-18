@@ -210,8 +210,48 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Manejar clic en botón editar
         $('.btn-editar').click(function() {
-            var id = $(this).data('id');
-            // Aquí iría el código para cargar los datos del árbol y abrir el modal de edición
+            const id = $(this).data('id');
+
+            fetch(`controllers/obtener_carga_arbolado.php?id=${id}&id_municipio=<?php echo $id_municipio; ?>`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('edit_id').value = data.arbol.id;
+                        document.getElementById('edit_date').value = data.arbol.date;
+                        document.getElementById('edit_cantidad').value = data.arbol.cantidad;
+                        document.getElementById('edit_especie').value = data.arbol.especie;
+                        document.getElementById('edit_publicoprivado').value = data.arbol.publicoprivado;
+                        document.getElementById('edit_quienLoPlanto').value = data.arbol.quienLoPlanto;
+                        document.getElementById('edit_descripcion').value = data.arbol.descripcion;
+
+                        const imagenActualDiv = document.getElementById('imagenActual');
+                        if (data.arbol.imagen) {
+                            imagenActualDiv.innerHTML = `
+                        <p>Imagen actual:</p>
+                        <img src="${data.arbol.imagen}" class="img-thumbnail" style="max-width: 200px">
+                    `;
+                        } else {
+                            imagenActualDiv.innerHTML = '<p>No hay imagen actual</p>';
+                        }
+
+                        const modal = new bootstrap.Modal(document.getElementById('modalEditarArbol'));
+                        modal.show();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar los datos'
+                    });
+                });
         });
 
         // Manejar clic en botón eliminar

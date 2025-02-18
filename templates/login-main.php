@@ -1,5 +1,5 @@
 <div class="page-title" id="contacto" data-aos="fade">
-    <div class="heading py-5">
+    <div class="headin py-5">
         <div class="container">
             <div class="row d-flex justify-content-center text-center">
                 <div class="col-lg-8">

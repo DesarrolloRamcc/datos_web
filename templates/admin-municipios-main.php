@@ -36,7 +36,7 @@ $municipios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td><?php echo htmlspecialchars($municipio['nombre_provincia']); ?></td>
                             <td><?php echo htmlspecialchars($municipio['name_governor']); ?></td>
                             <td>
-                                <button class="btn btn-info btn-sm btn-detalle" data-id="<?php echo $municipio['id']; ?>">
+                                <button class="btn btn-outline-info btn-sm btn-detalle" data-id="<?php echo $municipio['id']; ?>">
                                     <i class="bi bi-eye-fill"></i> Ver Detalle
                                 </button>
                             </td>
