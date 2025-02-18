@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-success">
                                     <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
                                 </button>
                                 <a href="Inicio" class="btn btn-secondary">

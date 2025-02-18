@@ -21,3 +21,8 @@ RewriteRule ^ Arbolado_%1? [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^Arbolado_(.+)/?$ arbolado.php?nombre_municipio=$1 [L,QSA]
+
+# Agregar la regla para contraseña
+RewriteRule ^CambiarContraseña$ reset_password.php [L]
+RewriteRule ^RecuperarContraseña$ forgot_password.php [L]
+RewriteRule ^CambiarContraseña/(.*)$ reset_password.php?token=$1 [L,QSA]
