@@ -112,23 +112,30 @@ $municipiosConAcciones = $stmtMunicipiosConAcciones->fetchAll(PDO::FETCH_ASSOC);
                 <h5 class="modal-title" id="municipiosConAccionesModalLabel">Municipios con Acciones</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <input type="text" id="searchMunicipios" class="form-control mb-3" placeholder="Buscar municipio...">
-                <ul id="listaMunicipios" class="list-group">
-                    <?php foreach ($municipiosConAcciones as $municipio): ?>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <?php echo htmlspecialchars($municipio['name']); ?>
-                            <span class="badge rounded-pill" style="background: #285152;">Árboles: <?php echo number_format($municipio['total_arboles']); ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+            <div class="modal-body px-4">
+                <table id="tablaMunicipiosConAcciones" class="table table-striped table-hover w-100">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Municipio</th>
+                            <th>Cantidad de Árboles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($municipiosConAcciones as $municipio): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($municipio['name']); ?></td>
+                                <td><?php echo number_format($municipio['total_arboles']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Inicializar DataTables
+    // Inicializar DataTables para la tabla principal
     $(document).ready(function() {
         $('#tablaMunicipios').DataTable({
             language: {
@@ -154,29 +161,61 @@ $municipiosConAcciones = $stmtMunicipiosConAcciones->fetchAll(PDO::FETCH_ASSOC);
         });
     });
 
-    // Event listener for the "Municipios con acciones" card
+    // Event listener para la tarjeta "Municipios con acciones"
     document.getElementById('municipiosConAccionesCard').addEventListener('click', function() {
         var myModal = new bootstrap.Modal(document.getElementById('municipiosConAccionesModal'));
         myModal.show();
-    });
 
-    // Search functionality for the modal
-    document.getElementById('searchMunicipios').addEventListener('keyup', function() {
-        var filter = this.value.toLowerCase();
-        var listItems = document.getElementById('listaMunicipios').getElementsByTagName('li');
-
-        for (var i = 0; i < listItems.length; i++) {
-            var textValue = listItems[i].textContent || listItems[i].innerText;
-            if (textValue.toLowerCase().indexOf(filter) > -1) {
-                listItems[i].style.display = "";
-            } else {
-                listItems[i].style.display = "none";
-            }
+        // Inicializar DataTables para la tabla del modal si aún no se ha inicializado
+        if (!$.fn.DataTable.isDataTable('#tablaMunicipiosConAcciones')) {
+            $('#tablaMunicipiosConAcciones').DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json',
+                    info: "",
+                    infoEmpty: "",
+                    infoFiltered: "",
+                    lengthMenu: "",
+                    zeroRecords: "No se encontraron resultados",
+                    emptyTable: "No hay datos disponibles",
+                    search: "Buscar:"
+                },
+                dom: 'ft', // solo muestra la tabla (f=filtro, t=tabla)
+                responsive: true,
+                order: [
+                    [0, 'asc']
+                ],
+                paging: false, // desactiva la paginación
+                searching: true, // mantiene la búsqueda
+                info: false, // elimina el texto de información
+                lengthChange: false // elimina el selector de registros por página
+            });
         }
     });
 </script>
 
 <style>
+    /* Estilos adicionales para el modal y la tabla */
+    .modal-lg {
+        max-width: 800px;
+        /* o el ancho que prefieras */
+    }
+
+    #tablaMunicipiosConAcciones {
+        margin: 0;
+    }
+
+    .dataTables_filter {
+        margin-bottom: 1rem;
+    }
+
+    .dataTables_filter input {
+        width: 300px !important;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+
     .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
@@ -194,7 +233,7 @@ $municipiosConAcciones = $stmtMunicipiosConAcciones->fetchAll(PDO::FETCH_ASSOC);
         transform: translateY(-5px);
     }
 
-    .cursor-pointer{
+    .cursor-pointer {
         cursor: pointer;
     }
 </style>
