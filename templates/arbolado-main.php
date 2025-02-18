@@ -7,6 +7,19 @@ $stmt->execute([$id_municipio]);
 $municipio = $stmt->fetch(PDO::FETCH_ASSOC);
 $nombre_municipio = $municipio['name'] ?? 'Municipio Desconocido';
 
+// Obtener el total de registros
+$sqlRegistros = "SELECT COUNT(*) as total_registros FROM contadorarboles WHERE municipio = ?";
+$stmtRegistros = $pdo->prepare($sqlRegistros);
+$stmtRegistros->execute([$id_municipio]);
+$totalRegistros = $stmtRegistros->fetch(PDO::FETCH_ASSOC)['total_registros'];
+
+// Obtener la suma total de árboles
+$sqlTotal = "SELECT SUM(cantidad) as total_arboles FROM contadorarboles WHERE municipio = ?";
+$stmtTotal = $pdo->prepare($sqlTotal);
+$stmtTotal->execute([$id_municipio]);
+$totalArboles = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total_arboles'] ?? 0;
+
+
 // Obtener listado de árboles
 $sql = "SELECT id, date, cantidad, descripcion FROM contadorarboles WHERE municipio = ? ORDER BY date DESC";
 $stmt = $pdo->prepare($sql);
@@ -16,6 +29,25 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <div class="container-fluid px-4">
     <h1 class="text-center m-4"><b>Arbolado de <?php echo htmlspecialchars($nombre_municipio); ?></b></h1>
+    <!-- Nuevos contadores -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-4 col-sm-6 mb-3 mb-md-0">
+            <div class="card h-100 bg-light">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-muted mb-2">Acciones</h5>
+                    <p class="card-text display-6 fw-bold text-success mb-0"><?php echo number_format($totalRegistros); ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="card h-100 bg-light">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-muted mb-2">Árboles</h5>
+                    <p class="card-text display-6 fw-bold text-success mb-0"><?php echo number_format($totalArboles); ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="d-flex justify-content-between mb-3">
         <a href="PanelAdministrador">
             <button type="button" class="btn btn-outline-secondary">
@@ -178,17 +210,28 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         function sortCards(order) {
             var cards = $('#tarjetasArboles .col').get();
             cards.sort(function(a, b) {
-                var aData = $(a).find('.card-title').text();
-                var bData = $(b).find('.card-title').text();
+                // Extraer la fecha del título de la tarjeta
+                var aDate = $(a).find('.card-title').text().split(': ')[1].split('-').reverse().join('-');
+                var bDate = $(b).find('.card-title').text().split(': ')[1].split('-').reverse().join('-');
+
+                // Convertir a objetos Date para comparación correcta
+                aDate = new Date(aDate);
+                bDate = new Date(bDate);
+
                 if (order[0][1] === 'desc') {
-                    return aData < bData ? 1 : -1;
+                    return bDate - aDate; // Para orden descendente
                 } else {
-                    return aData > bData ? 1 : -1;
+                    return aDate - bDate; // Para orden ascendente
                 }
             });
             $('#tarjetasArboles').append(cards);
         }
     });
+
+    // Ordenar tarjetas inicialmente
+    sortCards([
+        ['date', 'desc']
+    ]);
 </script>
 
 <?php
