@@ -60,9 +60,9 @@ $arboles = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Tabla de Árboles (visible en pantallas grandes) -->
-    <div class="card d-none d-md-block overflow-hidden mb-5">
+    <div class="card d-none d-md-block overflow-hidden mb-5 shadow">
         <div class="card-body">
-            <table id="tablaArboles" class="table table-striped table-hover">
+            <table id="tablaArboles" class="table table-striped table-hover ">
                 <thead>
                     <tr>
                         <th>Fecha</th>
